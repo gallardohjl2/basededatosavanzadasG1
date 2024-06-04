@@ -91,6 +91,21 @@ select * from
 Products 
 where ProductName like '[A-N]%'
 
+-- Sellecionar todas las ordenes que fueron emitidas por los
+-- empleados Nancy Davolio, Anne Dodsworth y Andrew Fuller (inner join)
+
+select o.OrderID as 'Numero de Orden',
+o.OrderDate as 'Fecha de Orden', 
+concat(FirstName, ' ', LastName) as 'Nombre'
+FROM 
+Employees as e
+INNER JOIN 
+orders as o
+on e.EmployeeID = o.EmployeeID
+where e.FirstName in ('Nancy', 'Anne', 'Andrew')
+and e.LastName in ('Davolio', 'Dodsworth', 'Fuller');
+
+
 -- Ejercicio 1: Obtener el nombre del cliente y el nombre del empleado 
 -- del representante de ventas de cada pedido.
 --Ejercicio 2: Mostrar el nombre del producto, el nombre del proveedor y el precio unitario de cada producto.
