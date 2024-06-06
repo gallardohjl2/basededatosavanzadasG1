@@ -84,12 +84,12 @@ where ProductName like '%[AN]%'
 select * from 
 Products 
 where ProductName like '%A%'
-or ProductName like '%N%'
+or ProductName like '%N%';
 
 -- Seleccionar todos los productos que comiencen entre la letra A y N
 select * from 
 Products 
-where ProductName like '[A-N]%'
+where ProductName like '[A-N]%';
 
 -- Sellecionar todas las ordenes que fueron emitidas por los
 -- empleados Nancy Davolio, Anne Dodsworth y Andrew Fuller (inner join)
@@ -106,12 +106,93 @@ where e.FirstName in ('Nancy', 'Anne', 'Andrew')
 and e.LastName in ('Davolio', 'Dodsworth', 'Fuller');
 
 
+-- Crear base de datos
+create database pruebaxyz;
+--utilizar base de datos
+use pruebaxyz;
+
+-- Crear una tabla a partir de una consulta con cero registros
+
+select top 0 * 
+into pruebaxyz.dbo.products2
+from Northwind.dbo.Products;
+
+-- Agrega un constraint a la tabla products2
+alter table products2
+add constraint pk_products2
+primary key(productid);
+
+alter table products2
+drop constraint pk_products2
+
+
+select * from products2
+
+-- llenar una tabla a partir de una consulta
+
+insert into pruebaxyz.dbo.products2 (ProductName, SupplierID,
+CategoryID,QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder,
+ReorderLevel, Discontinued )
+select ProductName, SupplierID,
+CategoryID,QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder,
+ReorderLevel, Discontinued 
+from northwind.dbo.Products;
+
 -- Ejercicio 1: Obtener el nombre del cliente y el nombre del empleado 
 -- del representante de ventas de cada pedido.
---Ejercicio 2: Mostrar el nombre del producto, el nombre del proveedor y el precio unitario de cada producto.
---Ejercicio 3: Listar el nombre del cliente, el ID del pedido y la fecha del pedido para cada pedido.
---Ejercicio 4: Obtener el nombre del empleado, el título del cargo y el departamento del empleado para cada empleado.
+
+-- Nombre cliente (Customers)
+-- Nombre del Empleado (Employees)
+-- Pedido
+
+use Northwind;
+
+select o.customerId, o.Employeeid, o.orderid, o.orderdate 
+from 
+orders as o;
+
+SELECT c.CompanyName as 'Nombre del cliente',
+concat(e.FirstName, ',',e.LastName) as 'Nombre del Empleado', 
+o.OrderID, o.orderdate, (od.Quantity * od.UnitPrice) as 'Importe'
+FROM CUSTOMERS as c
+INNER JOIN
+Orders as o
+ON o.CustomerID = c.customerid
+INNER JOIN Employees as e
+ON o.EmployeeID = e.EmployeeID
+INNER JOIN [Order Details] AS od
+ON od.OrderID = o.OrderID
+-- where year(OrderDate) in ('1996', '1998');
+where year(OrderDate) = '1996' or 
+year(OrderDate) = '1998';
+
+-- selecionar cuantas ordenes se han realizado en 1996 y 1998
+
+SELECT count(*) as 'Total de Ordenes'
+FROM CUSTOMERS as c
+INNER JOIN
+Orders as o
+ON o.CustomerID = c.customerid
+INNER JOIN Employees as e
+ON o.EmployeeID = e.EmployeeID
+INNER JOIN [Order Details] AS od
+ON od.OrderID = o.OrderID
+-- where year(OrderDate) in ('1996', '1998');
+where year(OrderDate) = '1996' or 
+year(OrderDate) = '1998';
+
+--Ejercicio 2: Mostrar el nombre del producto, 
+-- el nombre del proveedor 
+-- y el precio unitario de cada producto.
+
+SELECT p.ProductName as 'Nombre de Producto',
+s.CompanyName as 'Nombre del Proveedor',
+p.UnitPrice as 'Precio Unitario'
+From Products as p
+INNER JOIN Suppliers AS s
+ON p.SupplierID = s.SupplierID
 --Ejercicio 5: Mostrar el nombre del proveedor, el nombre del contacto y el teléfono del contacto para cada proveedor.
+
 --Ejercicio 6: Listar el nombre del producto, la categoría del producto y el nombre del proveedor para cada producto.
 --Ejercicio 7: Obtener el nombre del cliente, el ID del pedido, el nombre del producto y la cantidad del producto para cada detalle del pedido.
 --Ejercicio 8: Obtener el nombre del empleado, el nombre del territorio y la región del territorio para cada empleado que tiene asignado un territorio.
