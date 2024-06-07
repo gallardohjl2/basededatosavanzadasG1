@@ -1,5 +1,4 @@
 
-
 -- Sellecionar todas las ordenes que fueron emitidas por los
 -- empleados Nancy Davolio, Anne Dodsworth y Andrew Fuller
 
@@ -191,6 +190,7 @@ p.UnitPrice as 'Precio Unitario'
 From Products as p
 INNER JOIN Suppliers AS s
 ON p.SupplierID = s.SupplierID
+
 --Ejercicio 5: Mostrar el nombre del proveedor, el nombre del contacto y el teléfono del contacto para cada proveedor.
 
 --Ejercicio 6: Listar el nombre del producto, la categoría del producto y el nombre del proveedor para cada producto.
@@ -198,3 +198,83 @@ ON p.SupplierID = s.SupplierID
 --Ejercicio 8: Obtener el nombre del empleado, el nombre del territorio y la región del territorio para cada empleado que tiene asignado un territorio.
 --Ejercicio 9: Mostrar el nombre del cliente, el nombre del transportista y el nombre del país del transportista para cada pedido enviado por un transportista.
 --Ejercicio 10: Obtener el nombre del producto, el nombre de la categoría y la descripción de la categoría para cada producto que pertenece a una categoría.
+
+
+--Ejercicio 11. Seleccionar el total de ordenes hechas por cada uno de los proveedores 
+
+select s.CompanyName as 'Proveedor', count(*)  as 'Total de Ordenes'
+from Suppliers as s 
+INNER JOIN Products as p
+ON s.SupplierID = p.SupplierID
+INNER JOIN [Order Details] as od 
+ON od.ProductID = p.ProductID
+group by s.CompanyName
+
+--Ejercicio 12. Seleccionar el total de dinero que he vendido por proveedor del ultimo trimestre de 1996
+
+select s.CompanyName as 'Proveedor', sum(od.UnitPrice * od.Quantity) as 'Total de Ventas $'
+from Suppliers as s
+INNER JOIN products as p
+on s.SupplierID = p.SupplierID
+INNER JOIN [Order Details] as od
+on od.ProductID = p.ProductID
+INNER JOIN Orders AS o
+on o.OrderID = od.OrderID
+where o.OrderDate between '1996-09-01' and '1996-12-31'
+group by s.CompanyName
+order by 'Total de Ventas $' desc
+
+
+select  sum(od.UnitPrice * od.Quantity) as 'Total de Ventas $'
+FROM  [Order Details] as od
+inner join orders as o
+on o.OrderID = od.OrderID
+where o.OrderDate between '1996-09-01' and '1996-12-31'
+order by 'Total de Ventas $' desc
+
+
+select sum(unitprice *quantity) as 'Total de Ventas'
+from [Order Details];
+
+--Ejercicio 13. Seleccionar el total de dinero vendido por categoria
+
+select c.categoryname, 
+sum(od.Quantity * od.UnitPrice) as 'Total de ventas'
+from [Order Details] as od
+INNER JOIN Products as p 
+on od.ProductID = p.ProductID
+INNER JOIN categories as c 
+on c.CategoryID = p.CategoryID
+group by c.categoryname 
+order by 2 desc;
+
+
+select c.categoryname, 
+sum(od.Quantity * od.UnitPrice) as 'Total de ventas'
+from [Order Details] as od
+INNER JOIN Products as p 
+on od.ProductID = p.ProductID
+INNER JOIN categories as c 
+on c.CategoryID = p.CategoryID
+group by c.categoryname 
+order by sum(od.Quantity * od.UnitPrice) desc;
+
+select c.categoryname, 
+sum(od.Quantity * od.UnitPrice) as 'Total de ventas'
+from [Order Details] as od
+INNER JOIN Products as p 
+on od.ProductID = p.ProductID
+INNER JOIN categories as c 
+on c.CategoryID = p.CategoryID
+group by c.categoryname 
+order by 'Total de ventas' desc;
+
+
+
+
+--Ejercicio 14. Seleccionar el total de dinero vendido por categoria y dentro por producto
+
+
+
+
+select getdate()
